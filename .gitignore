@@ -28,3 +28,9 @@ proguard/
 *.iws
 .idea/
 /Posse/target/
+/U.are.U/nbproject/private/
+/U.are.U/build/
+/U.are.U/dist/
+/SampleU.are.U/nbproject/private/
+/SampleU.are.U/dist/
+/SampleU.are.U/build/
