@@ -160,6 +160,32 @@ getQuestions = function(){
 			'C. Church<br/>'+
 			'D. None of the above<br/>'+
 		'","answer":"C. Church","point":200},'+
+		'{"id":46,"question":"Mary is the ____________ of faith<br/><br/>'+
+			'A. Initiator<br/>'+
+			'B. Model<br/>'+
+			'C. Focus<br/>'+
+			'D. None of the above<br/>'+
+		'","answer":"B. Model","point":100},'+
+		'{"id":47,"question":"We are devoted to Mary in a special way but differs from the cult of _______________ which is directed to God alone.<br/><br/>'+
+			'A. Veneration or hyperdulia<br/>'+
+			'B. Honoring or dulia<br/>'+
+			'C. Adoration or latria<br/>'+
+			'D. None of the above<br/>'+
+		'","answer":"C. Adoration or latria","point":500},'+
+		'{"id":48,"question":"For those who sin after baptism, the Christ instituted the sacrament of _______________ which reconciles the sinner with God.<br/><br/>'+
+			'A. Baptism<br/>'+
+			'B. Holy Order<br/>'+
+			'C. Reconciliation or Penance<br/>'+
+			'D. None of the above<br/>'+
+		'","answer":"C. Reconciliation or Penance","point":200},'+
+		'{"id":49,"question":"The church has the power to forgive sins since Christ himself conferred it upon her (Jn 20:22-23)<br/><br/>'+
+			'A. This statement is true<br/>'+
+			'B. This statement is essentially false<br/>'+
+			'C. This is irrelevant<br/>'+
+			'D. None of the above<br/>'+
+		'","answer":"A. This statement is true","point":100},'+
+		'{"id":50,"question":"In preparation for the coming for Christ, God prepared men for the expectation of this coming.  This reached its highest point when John the _______  came and announced his coming.","answer":"Baptist","point":100},' + 
+		'{"id":51,"question":"True or False:  At Christmas, the glory of heaven is shown in the weakness of a baby","answer":"True","point":100}' + 
 	']';
 	return JSON.parse(questionsText);
 }

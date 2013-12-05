@@ -1,3 +1,4 @@
+package sampleu.are.u;
 
 import javax.swing.JOptionPane;
 

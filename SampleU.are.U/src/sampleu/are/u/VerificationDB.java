@@ -1,5 +1,12 @@
 package sampleu.are.u;
 
+import com.digitalpersona.uareu.Engine;
+import com.digitalpersona.uareu.Fid;
+import com.digitalpersona.uareu.Fmd;
+import com.digitalpersona.uareu.Importer;
+import com.digitalpersona.uareu.Reader;
+import com.digitalpersona.uareu.UareUException;
+import com.digitalpersona.uareu.UareUGlobal;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,9 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import com.digitalpersona.uareu.*;
 import com.digitalpersona.uareu.dpfj.ImporterImpl;
-import static java.awt.image.ImageObserver.WIDTH;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +29,7 @@ import org.hibernate.SessionFactory;
 import sampleu.are.u.model.Subscriber;
 import sampleu.are.u.singleton.HibernateUtil;
 
-public class Verification
+public class VerificationDB
         extends JPanel
         implements ActionListener {
 
@@ -38,7 +43,7 @@ public class Verification
     private final String m_strPrompt1 = "Verification started\n    put any finger on the reader\n\n";
     private final String m_strPrompt2 = "    put the same or any other finger on the reader\n\n";
 
-    private Verification(Reader reader) {
+    private VerificationDB(Reader reader) {
         m_reader = reader;
         m_fmds = new Fmd[2]; //two FMDs to perform comparison
 
@@ -104,87 +109,51 @@ public class Verification
 
     private boolean ProcessCaptureResult(CaptureThread.CaptureEvent evt) {
         boolean bCanceled = false;
-
+        
         if (null != evt.capture_result) {
             if (null != evt.capture_result.image && Reader.CaptureQuality.GOOD == evt.capture_result.quality) {
-                //extract features
-                Engine engine = UareUGlobal.GetEngine();
-
                 try {
-                    Fmd fmd = engine.CreateFmd(evt.capture_result.image, Fmd.Format.ANSI_378_2004);
-                    if (null == m_fmds[0]) {
-                        m_fmds[0] = fmd;
-                    } else if (null == m_fmds[1]) {
-                        m_fmds[1] = fmd;
-                    }
-                } catch (UareUException e) {
-                    MessageBox.DpError("Engine.CreateFmd()", e);
-                }
+                    //extract features
+                    Engine engine = UareUGlobal.GetEngine();
+                    
+                    Fmd scannedFMD = engine.CreateFmd(evt.capture_result.image, Fmd.Format.ANSI_378_2004);
+                    
+                    /*
+                     * Add data to check database if fingerprint is same
+                     * (also, this will test if casting from persisted BLOB
+                     * is will casted back to FMD)
+                     */
+                    HibernateUtil hu = HibernateUtil.getInstance();
+                    SessionFactory sf = hu.getSf();
+                    Session s = sf.openSession();
+                    s.beginTransaction();
+                    SQLQuery query = s.createSQLQuery("SELECT * FROM Subscriber");
+                    query.addEntity(Subscriber.class);
+                    List<Subscriber> subs = query.list();
+                    System.out.println("size " + subs.size());
 
-                if (null != m_fmds[0] && null != m_fmds[1]) {
-                    //perform comparison
-                    try {
-                        int falsematch_rate = engine.Compare(m_fmds[0], 0, m_fmds[1], 0);
-
-                        int target_falsematch_rate = Engine.PROBABILITY_ONE / 100000; //target rate is 0.00001
-                        if (falsematch_rate < target_falsematch_rate) {
-                            m_text.append("Fingerprints matched.\n");
-                            String str = String.format("dissimilarity score: 0x%x.\n", falsematch_rate);
+                    /*
+                     * Compare m_fmds[0] - which is the latest scanned finger 
+                     * with the one in the database
+                     */
+                    Importer importer = new ImporterImpl();
+                    for (Subscriber sub : subs) {
+                        Fmd fmdDB = importer.ImportFmd(sub.getFmd(), Fmd.Format.ANSI_378_2004, Fmd.Format.ANSI_378_2004);
+                        int falsematch_rate_fromdb = engine.Compare(fmdDB, 0, scannedFMD, 0);
+                        int target_falsematch_rate_fromdb = Engine.PROBABILITY_ONE / 100000; //target rate is 0.00001
+                        if (falsematch_rate_fromdb < target_falsematch_rate_fromdb) {
+                            m_text.append("Fingerprints of " + sub.getName() + " with id " + sub.getId() + " matched.\n");
+                            String str = String.format("dissimilarity score: 0x%x.\n", falsematch_rate_fromdb);
                             m_text.append(str);
-                            str = String.format("false match rate: %e.\n\n\n", (double) (falsematch_rate / Engine.PROBABILITY_ONE));
+                            str = String.format("false match rate: %e.\n\n\n", (double) (falsematch_rate_fromdb / Engine.PROBABILITY_ONE));
                             m_text.append(str);
                         } else {
                             m_text.append("Fingerprints did not match.\n\n\n");
                         }
-
-                        /*
-                         * Add data to check database if fingerprint is same
-                         * (also, this will test if casting from persisted BLOB
-                         * is will casted back to FMD)
-                         */
-                        HibernateUtil hu = HibernateUtil.getInstance();
-                        SessionFactory sf = hu.getSf();
-                        Session s = sf.openSession();
-                        s.beginTransaction();
-                        SQLQuery query = s.createSQLQuery("SELECT * FROM Subscriber");
-                        query.addEntity(Subscriber.class);
-                        List<Subscriber> subs = query.list();
-                        System.out.println("size " + subs.size());
-
-                        /*
-                         * Compare m_fmds[1] - which is the latest scanned finger 
-                         * with the one in the database
-                         */
-                        Importer importer = new ImporterImpl();
-                        for (Subscriber sub : subs) {
-                            Fmd fmdDB = importer.ImportFmd(sub.getFmd(), Fmd.Format.ANSI_378_2004, Fmd.Format.ANSI_378_2004);
-                            int falsematch_rate_fromdb = engine.Compare(fmdDB, 0, m_fmds[1], 0);
-                            int target_falsematch_rate_fromdb = Engine.PROBABILITY_ONE / 100000; //target rate is 0.00001
-                            if (falsematch_rate_fromdb < target_falsematch_rate_fromdb) {
-                                m_text.append("Fingerprints of " + sub.getName() + " with id " + sub.getId() + " matched.\n");
-                                String str = String.format("dissimilarity score: 0x%x.\n", falsematch_rate_fromdb);
-                                m_text.append(str);
-                                str = String.format("false match rate: %e.\n\n\n", (double) (falsematch_rate_fromdb / Engine.PROBABILITY_ONE));
-                                m_text.append(str);
-                            } else {
-                                m_text.append("Fingerprints did not match.\n\n\n");
-                            }
-                        }
-
-                    } catch (UareUException e) {
-                        Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).log(Level.SEVERE, e.toString());
-                        MessageBox.DpError("Engine.CreateFmd()", e);
                     }
-
-                    //discard FMDs
-                    m_fmds[0] = null;
-                    m_fmds[1] = null;
-
-                    //the new loop starts
-                    m_text.append(m_strPrompt1);
-                } else {
-                    //the loop continues
-                    m_text.append(m_strPrompt2);
+                } catch (UareUException ex) {
+                    Logger.getLogger(VerificationDB.class.getName()).log(Level.SEVERE, null, ex);
+                    MessageBox.DpError("Engine.CreateFmd()", ex);
                 }
             } else if (Reader.CaptureQuality.CANCELED == evt.capture_result.quality) {
                 //capture or streaming was canceled, just quit
@@ -244,8 +213,8 @@ public class Verification
     }
 
     public static void Run(Reader reader) {
-        JDialog dlg = new JDialog((JDialog) null, "Verification", true);
-        Verification verification = new Verification(reader);
-        verification.doModal(dlg);
+        JDialog dlg = new JDialog((JDialog) null, "VerificationDB", true);
+        VerificationDB verificationDB = new VerificationDB(reader);
+        verificationDB.doModal(dlg);
     }
 }

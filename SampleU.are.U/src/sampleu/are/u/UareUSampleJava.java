@@ -1,3 +1,4 @@
+package sampleu.are.u;
 
 import javax.swing.*;
 
@@ -6,6 +7,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import com.digitalpersona.uareu.*;
+import com.digitalpersona.uareu.dpfj.FmdImpl;
+import com.digitalpersona.uareu.dpfj.ImporterImpl;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import sampleu.are.u.VerificationDB;
+import sampleu.are.u.model.Subscriber;
+import sampleu.are.u.singleton.HibernateUtil;
 
 public class UareUSampleJava
         extends JPanel
@@ -16,6 +28,7 @@ public class UareUSampleJava
     private static final String ACT_CAPTURE = "capture";
     private static final String ACT_STREAMING = "streaming";
     private static final String ACT_VERIFICATION = "verification";
+    private static final String ACT_VERIFICATIONDB = "verification_db";
     private static final String ACT_IDENTIFICATION = "identification";
     private static final String ACT_ENROLLMENT = "enrollment";
     private static final String ACT_EXIT = "exit";
@@ -70,6 +83,12 @@ public class UareUSampleJava
         add(btnVerification);
         add(Box.createVerticalStrut(vgap));
 
+        JButton btnVerificationFromDB = new JButton("Run verification from DB");
+        btnVerificationFromDB.setActionCommand(ACT_VERIFICATIONDB);
+        btnVerificationFromDB.addActionListener(this);
+        add(btnVerificationFromDB);
+        add(Box.createVerticalStrut(vgap));
+
         JButton btnIdentification = new JButton("Run identification");
         btnIdentification.setActionCommand(ACT_IDENTIFICATION);
         btnIdentification.addActionListener(this);
@@ -117,6 +136,12 @@ public class UareUSampleJava
                 MessageBox.Warning("Reader is not selected");
             } else {
                 Verification.Run(m_reader);
+            }
+        } else if (e.getActionCommand().equals(ACT_VERIFICATIONDB)) {
+            if (null == m_reader) {
+                MessageBox.Warning("Reader is not selected");
+            } else {
+                VerificationDB.Run(m_reader);
             }
         } else if (e.getActionCommand().equals(ACT_IDENTIFICATION)) {
             if (null == m_reader) {
@@ -170,7 +195,7 @@ public class UareUSampleJava
     public static void main(String[] args) {
 
         System.out.println("Library Path:" + System.getenv("LD_LIBRARY_PATH"));
-
+        HibernateUtil hu = HibernateUtil.getInstance();
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createAndShowGUI();

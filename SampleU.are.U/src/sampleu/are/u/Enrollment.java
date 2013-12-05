@@ -1,3 +1,4 @@
+package sampleu.are.u;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -13,6 +14,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import com.digitalpersona.uareu.*;
+import java.util.Date;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import sampleu.are.u.model.Subscriber;
+import sampleu.are.u.singleton.HibernateUtil;
 
 public class Enrollment
         extends JPanel
@@ -236,6 +242,20 @@ public class Enrollment
                      * 3. If there's no existing data (same minutiae), persist
                      * 
                      */
+                    HibernateUtil hu = HibernateUtil.getInstance();
+                    SessionFactory sf = hu.getSf();
+                    Session s = sf.openSession();
+                    s.beginTransaction();
+                    
+                    Subscriber subs = new Subscriber();
+                    subs.setCreated(new Date());
+                    subs.setFmd(evt.enrollment_fmd.getData());
+                    subs.setName("Lorem Ipsum");
+                    subs.setRemarks("Dolor sit amet");
+                    s.persist(subs);
+                    
+                    s.getTransaction().commit();
+                    s.close();
                     m_text.append(str);
                 } else {
                     MessageBox.DpError("Enrollment template creation", evt.exception);
