@@ -47,7 +47,6 @@ public class VerificationDB
     private JTextArea m_text;
     private final String m_strPrompt1 = "Verification started\n    put any finger on the reader\n\n";
     private final String m_strPrompt2 = "    put the same or any other finger on the reader\n\n";
-    
     private ImagePanel imagePanel;
 
     private VerificationDB(Reader reader) {
@@ -80,7 +79,7 @@ public class VerificationDB
         Dimension dmIP = new Dimension(380, 380);
         imagePanel.setPreferredSize(dmIP);
         add(imagePanel);
-        
+
         setOpaque(true);
     }
 
@@ -131,63 +130,18 @@ public class VerificationDB
                     Fmd scannedFMD = engine.CreateFmd(evt.capture_result.image, Fmd.Format.ANSI_378_2004);
 
                     for (int i = 0; i < evt.capture_result.image.getViews().length; i++) {
-                        try {
-                            Fid.Fiv fiv = evt.capture_result.image.getViews()[i];
-                            System.out.println("fiv data " + fiv.getData());
-                            System.out.println("fiv finger position" + fiv.getFingerPosition());
-                            System.out.println("fiv height" + fiv.getHeight());
-                            System.out.println("fiv image data " + fiv.getImageData());
-                            System.out.println("fiv quallity " + fiv.getQuality());
-                            System.out.println("fiv viewcnt" + fiv.getViewCnt());
-                            System.out.println("fiv viewnum " + fiv.getViewNumber());
-                            System.out.println("fiv width " + fiv.getWidth());
+                        Fid.Fiv fiv = evt.capture_result.image.getViews()[i];
+                        System.out.println("fiv data " + fiv.getData());
+                        System.out.println("fiv finger position" + fiv.getFingerPosition());
+                        System.out.println("fiv height" + fiv.getHeight());
+                        System.out.println("fiv image data " + fiv.getImageData());
+                        System.out.println("fiv quallity " + fiv.getQuality());
+                        System.out.println("fiv viewcnt" + fiv.getViewCnt());
+                        System.out.println("fiv viewnum " + fiv.getViewNumber());
+                        System.out.println("fiv width " + fiv.getWidth());
 
-//                            InputStream is = new ByteArrayInputStream(fiv.getImageData());
-                            
-                            ImageInputStream iis = ImageIO.createImageInputStream(new ByteArrayInputStream(fiv.getImageData()));
-                            System.out.println("iis != null " + (iis != null));
-                            
-                            ImageReader ir = ImageIO.getImageReadersByFormatName("BMP").next();
-                            ir.setInput(iis, false);
-                            System.out.println("format " + ir.getFormatName());
-                            
-                            imagePanel.showImage(evt.capture_result.image);
-                            
-//                            int num = ir.getNumImages(true);
-//                            System.out.println("num " + num);
-//                            for (int j=0; j<num; j++){
-//                                BufferedImage bi = ir.read(j);
-//                                ImageIO.write(bi, ir.getFormatName(), new File("/home/djadoremus/Desktop/fingerprint" + j + "." + ir.getFormatName()));
-//                            }
-//                            iis.close();
-                                                        
-//                            OutputStream os;
-//                            os = new FileOutputStream("/home/djadoremus/Desktop/new-fingerprint" + i + ".bmp");
-//
-//                            int read = 0;
-//                            byte[] bytes = new byte[1024];
-//
-////                            while ((read = iis.read()) != -1) {
-////                                os.write(bytes, 0, read);
-////                            }
-//                            os.write(fiv.getImageData());
-//                            iis.close();
-//                            os.close();
-//                            
-//                            File file = new File("/home/djadoremus/Desktop/new-fingerprint" + i + ".bmp");
-//                            FileInputStream fis = new FileInputStream(file);
-//                            System.out.println("file " + file.getAbsolutePath());
-//                            System.out.println("fis " + fis.toString());
-//                            BufferedImage bi = ImageIO.read(fis);
-//                            System.out.println("bi != null " + (bi != null));
-//                            ImageIO.write(bi, "bmp", new File("/home/djadoremus/Desktop/fingerprint" + i + ".bmp"));
-                            
-//                            BufferedImage bi = ImageIO.read(is);
-//                            System.out.println("bi != null " + (bi != null));
-//                            ImageIO.write(bi, "bmp", new File("/home/djadoremus/Desktop/fingerprint" + i + ".bmp"));
-                        } catch (IOException ex) {
-                            Logger.getLogger(VerificationDB.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        imagePanel.showImage(evt.capture_result.image);
+
                     }
 
                     /*
