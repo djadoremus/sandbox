@@ -1,0 +1,49 @@
+getQuestions = function(){
+	var questionsText = '['+
+		'{"id":1,"question":"True or False: “Christ” in Hebrew and “Messiah” in Greek means the “anointed one”","answer":"False","point":0},' + 
+		'{"id":2,"question":"The council of ______ teaches that the Lord Jesus Christ is true God and true man","answer":"Chalcedon","point":0},' + 
+		'{"id":3,"question":"The human will of Christ followed without opposition, the _______ will and is subject to it.","answer":"Divine","point":0},' + 
+		'{"id":4,"question":"The enmity between the serpent and the woman / son in Gen 3:15 is called the Proto-_______.","answer":"Evangelium","point":0},' + 
+		'{"id":5,"question":"The name of God as revealed to Moses is.<br/><br/>'+
+			'a. I am who I am<br/>'+
+			'b. I will be who I will be<br/>'+
+			'c. Ehyeh asher ehyeh<br/>'+
+			'd. None of the above<br/>'+
+			'e. a, b and c<br/>'+
+		'","answer":"e. a, b and c","point":0},'+
+		'{"id":6,"question":"In addition to knowing the literary genres of Scripture itself, what other sources are needed in order to interpret the Scripture correctly? ","answer":"Read the Scripture within the living Tradition of the Whole Church","point":0},' + 
+		'{"id":7,"question":"The illumination of the unity of the divine plan gained by discerning in God&lsquos works of the Old Covenant prefigurations of what he accomplished in the fullness of time in the person of his incarnate Son is called: <br/><br/>'+
+			'a.  transubstantiation<br/>'+
+			'b. inerrancy<br/>'+
+			'c. impeccability<br/>'+
+			'd. typology<br/>'+
+			'e. inspiration<br/>'+
+		'","answer":"d. typology","point":0},'+
+		'{"id":8,"question":"Which is true? Besides the literal reading of Scripture, the spiritual reading of Scripture <br/><br/>'+
+			'a. leads us to understand events by recognizing their significance in Christ<br/>'+
+			'b. ought to lead us to act justly<br/>'+
+			'c. allows us to view realities and events in terms of their eternal significance<br/>'+
+			'd. none of the above<br/>'+
+			'e. all of the above<br/>'+
+		'","answer":"e. all of the above","point":0},'+
+		'{"id":9,"question":"What are the three stages in the formation of the Gospels?","answer":"1) the life and teaching of Jesus 2) the oral tradition 3) the written Gospels.","point":0},' + 
+		'{"id":10,"question":"The purpose of angels is to: <br/><br/>'+
+			'a. be a messenger of God.<br/>'+
+			'b. glorify God.<br/>'+
+			'c. serve the accomplishment of the divine plan. <br/>'+
+			'd. a and b<br/>'+
+			'e. all of the above<br/>'+
+		'","answer":"e. all of the above","point":0},'+
+		'{"id":11,"question":"What is both the end for which man was created and the fundamental reason for his dignity? ","answer":"To know and love God, and to share in his life","point":0},' + 
+		'{"id":12,"question":"Which are part of the state of “original justice”? <br/><br/>'+
+			'a. Friendship with God. <br/>'+
+			'b. Harmony with creation. <br/>'+
+			'c. Harmony with himself. <br/>'+
+			'd. Lack of suffering. <br/>'+
+			'e. Infused knowledge.<br/>'+
+			'Choose none, any, or all of the above<br/>'
+		'","answer":"a, b c, and d","point":0}'+
+
+	']';
+	return JSON.parse(questionsText);
+}
