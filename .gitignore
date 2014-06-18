@@ -34,8 +34,10 @@ proguard/
 /SampleU.are.U/nbproject/private/
 /SampleU.are.U/dist/
 /SampleU.are.U/build/
+/SportsOrg/.settings
 /SportsOrg/SportsOrgWS/target/
 /SportsOrg/SportsOrgClient/target/
 /SportsOrg/SportsOrgSOAP/target/
 /SportsOrg/simple-jax-ws/target/
 /SportsOrg/SportsOrgJAXWS/target/
+/SportsOrg/SportsorgJAXWS/.settings

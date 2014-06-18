@@ -8,5 +8,6 @@
   <name>SportsOrg</name>
     <modules>
         <module>SportsOrgJAXWS</module>
+	<module>UAAPSportsJAXRS</module>
     </modules>
 </project>
